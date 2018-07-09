@@ -1,0 +1,134 @@
+#version 430 core
+/**
+ * Read/write buffer example.
+ */
+
+// spec says these are min of [1024,1024,64]
+// but the total must not be > 1024
+layout(local_size_x = 64, local_size_y = 1) in;
+
+layout(binding = 0, std430)
+readonly buffer InputBuffer_t {
+	float floatsIn[];
+};
+layout(binding = 1, std430)
+readonly buffer InputBuffer2_t {
+	uint intsIn[];
+};
+layout(binding = 2, std430)
+writeonly buffer OutputBuffer_t {
+	uint intsOut[];
+};
+
+#include "useful_functions.comp"
+
+// local memory
+//shared uint foo[16];
+
+uniform vec3 BOUNDS[2];
+
+#line 1
+
+uint len = intsIn.length();
+
+/**
+ *  Assumes numBits is between 1 and 32.
+ */
+uint getBits(uint byteIndex, uint bitOffset, int numBits) {
+    byteIndex += bitOffset/8;
+    bitOffset &= 7u;
+    const uint uintIndex = byteIndex/4;
+    const uint uintRem   = byteIndex&3u;
+    const int bitpos     = int(bitOffset + (uintRem*8));
+    const int numBits2   = max(0, numBits - (32-bitpos));
+    numBits -= numBits2;
+    const uint result = bitfieldExtract(intsIn[uintIndex], bitpos, numBits);
+    const uint add = numBits2 == 0 ? 0 :
+               (bitfieldExtract(intsIn[uintIndex+1], 0, numBits2) << numBits);
+    return result + add;
+}
+struct Ray {
+    vec3 start;
+    vec3 direction;
+    vec3 invDirection;
+};
+struct Position {
+    uvec3 upos;
+    vec3 fpos;
+    int chunk;
+};
+float getMinDistToEdge(const Ray ray,
+                       const Position pos,
+                       const uint voxelSize)
+{
+    const vec3 origin = vec3(0);
+    const vec3 p    = pos.fpos-origin;
+    const vec3 rem  = mod(p, voxelSize);
+    const vec3 size = vec3(greaterThanEqual(ray.direction, vec3(0))) * voxelSize;
+    const vec3 dist = size-rem;
+
+    const vec3 m    = dist * ray.invDirection;
+    const float res = min(m.x, min(m.y, m.z));
+    return max(res, 0);
+}
+
+
+void main() {
+	uvec2 pos       = gl_GlobalInvocationID.xy;
+	uvec2 localPos  = gl_LocalInvocationID.xy;
+	uint index      = gl_GlobalInvocationID.x;
+	uint localIndex = gl_LocalInvocationIndex;
+
+    if(index==0) {
+
+    }
+
+
+    // byte        0         1         2         3
+    //          0x44      0x33      0x22      0x11
+    //            68        51        34        17
+    //     0100_0100 0011_0011 0010_0010 0001_0001
+    //     |       |         |         |    |    |
+    // bit 31     24        16         8    4    0
+
+    //uint b = getBits(0,24,9); // 1_01000100
+    //uint b = getBits(0,24,3);   // 100
+    //uint b = getBits(3,0,13);  // 1000101000100
+    //uint b = getBits(0,0,32);  // 0100_0100 0011_0011 0010_0010 0001_0001
+    //uint b = getBits(0,8,32);    // 0001_0001 0100_0100 0011_0011 0010_0010
+    //uint b = getBits(4,8,32);      // 0001_0001 0100_0100 0011_0011 0010_0010
+    //uint b = getBits(3,7,1);    // 0
+    //uint b = getBits(3,7,2);    // 10
+    //uint b = getBits(0,0,0);    // 0
+
+
+//    Ray ray;
+//    ray.direction    = normalize(vec3(-1,0,0));
+//    ray.invDirection = 1.0f / ray.direction;
+//
+//    Position p;
+//    p.fpos = vec3(10,10,10);
+//
+//    float f = getMinDistToEdge(ray, p, 100);
+
+
+    // a0 = 160
+//    uint a = (0xfff0a001u);
+//    vec3 b = unpackUnorm4x8(a).yzw * 255;
+//    //vec3 b = vec3(a>>8);
+//
+//    intsOut[index] = uint(b.x);
+
+
+    // 90.000000
+    // 10.000000
+
+    //intsOut[index] = uint(f*100000);
+
+
+    // 0x44332211
+
+    float n = random(vec2(22,1));
+
+    intsOut[index] = uint(n*100000);
+}

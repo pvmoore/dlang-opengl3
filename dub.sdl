@@ -1,0 +1,46 @@
+
+name "opengl3"
+platforms "windows"
+
+
+#dflags "-vgc"
+#dflags "-profile=gc"
+#dflags "-profile"
+	
+buildType "debug" {
+	buildOptions "debugMode" "debugInfo" "alwaysStackFrame" "stackStomping" "warningsAsErrors"
+}
+buildType "release" {
+	buildOptions "releaseMode" "optimize" "inline" "noBoundsCheck"
+}
+
+configuration "test" {
+	#mainSourceFile "src/main.d"
+	targetType "executable"
+	targetName "bin-test"
+
+	dflags "-O5" platform="ldc"
+    dflags "-mcpu=haswell" platform="ldc"
+    dflags "-mattr=+fma,+avx2" platform="ldc"
+    dflags "-expensive-combines" platform="ldc"
+    dflags "-enable-cross-module-inlining" platform="ldc"
+    dflags "-cache=.dub/cache" platform="ldc"
+}
+configuration "library" {
+	targetType "library"
+	excludedSourceFiles "src/main.d"
+}
+
+// internal
+dependency "maths" version="~master"
+dependency "logging" version="~master"
+dependency "common" version="~master"
+dependency "fonts" version="~master"
+dependency "resources" version="~master"
+
+// external
+dependency "derelict-gl3" version="~>2.0.0-beta.6"
+dependency "derelict-glfw3" version="~>4.0.0-beta.1"
+
+
+#dependency "derelict-assimp3" version="~master"
