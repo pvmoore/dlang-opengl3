@@ -47,49 +47,51 @@ private:
     void populateVbo() {
         vao.bind();
 
+        const float s = 100.0;
+
         Vector3[] vertices = [
             // left
-            Vector3(-100, -100,  100),
-            Vector3(-100, -100, -100),
-            Vector3(-100,  100, -100),
-            Vector3(-100,  100, -100),
-            Vector3(-100,  100,  100),
-            Vector3(-100, -100,  100),
+            Vector3(-s, -s,  s),
+            Vector3(-s, -s, -s),
+            Vector3(-s,  s, -s),
+            Vector3(-s,  s, -s),
+            Vector3(-s,  s,  s),
+            Vector3(-s, -s,  s),
             // back
-            Vector3(-100,  100, -100),
-            Vector3(-100, -100, -100),
-            Vector3( 100, -100, -100),
-            Vector3( 100, -100, -100),
-            Vector3( 100,  100, -100),
-            Vector3(-100,  100, -100),
+            Vector3(-s,  s, -s),
+            Vector3(-s, -s, -s),
+            Vector3( s, -s, -s),
+            Vector3( s, -s, -s),
+            Vector3( s,  s, -s),
+            Vector3(-s,  s, -s),
             // right
-            Vector3( 100, -100, -100),
-            Vector3( 100, -100,  100),
-            Vector3( 100,  100,  100),
-            Vector3( 100,  100,  100),
-            Vector3( 100,  100, -100),
-            Vector3( 100, -100, -100),
+            Vector3( s, -s, -s),
+            Vector3( s, -s,  s),
+            Vector3( s,  s,  s),
+            Vector3( s,  s,  s),
+            Vector3( s,  s, -s),
+            Vector3( s, -s, -s),
             // front
-            Vector3(-100, -100,  100),
-            Vector3(-100,  100,  100),
-            Vector3( 100,  100,  100),
-            Vector3( 100,  100,  100),
-            Vector3( 100, -100,  100),
-            Vector3(-100, -100,  100),
+            Vector3(-s, -s,  s),
+            Vector3(-s,  s,  s),
+            Vector3( s,  s,  s),
+            Vector3( s,  s,  s),
+            Vector3( s, -s,  s),
+            Vector3(-s, -s,  s),
             // top
-            Vector3( 100,  100,  100),
-            Vector3(-100,  100,  100),
-            Vector3(-100,  100, -100),
-            Vector3(-100,  100, -100),
-            Vector3( 100,  100, -100),
-            Vector3( 100,  100,  100),
+            Vector3( s,  s,  s),
+            Vector3(-s,  s,  s),
+            Vector3(-s,  s, -s),
+            Vector3(-s,  s, -s),
+            Vector3( s,  s, -s),
+            Vector3( s,  s,  s),
             // bottom
-            Vector3(-100, -100, -100),
-            Vector3(-100, -100,  100),
-            Vector3( 100, -100, -100),
-            Vector3( 100, -100, -100),
-            Vector3(-100, -100,  100),
-            Vector3( 100, -100,  100)
+            Vector3(-s, -s, -s),
+            Vector3(-s, -s,  s),
+            Vector3( s, -s, -s),
+            Vector3( s, -s, -s),
+            Vector3(-s, -s,  s),
+            Vector3( s, -s,  s)
         ];
 
         vbo = VBO.array(vertices.length*Vector3.sizeof, GL_STATIC_DRAW);

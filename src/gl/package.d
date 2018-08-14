@@ -29,17 +29,7 @@ import gl.util.debugging;
 import gl.util.obj_loader;
 import gl.util.pixelbuffer;
 import gl.util.shader_code_reader;
-import gl.util.util; 
-
-import gl.geom._2d.fpscounter;
-import gl.geom._2d.sprite;
-import gl.geom._2d.transformer;
-
-import gl.geom._3d.cube;
-import gl.geom._3d.geometry;
-import gl.geom._3d.model;
-
-import gl.ui.ui;
+import gl.util.util;
 
 // some extra AMD specific constants
 enum : uint {

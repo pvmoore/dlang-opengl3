@@ -3,6 +3,9 @@ module gl.all;
 public:
 
 import gl;
+import gl.geom;
+import gl.ui;
+
 import maths;
 import logging : log, logfine, logwarn, flushLog;
 import resources : BMP, PNG;

@@ -1,8 +1,6 @@
 module gl.ui.ui;
 
 import gl.all;
-import gl.ui.label;
-import gl.ui.window;
 
 __gshared uint ids = 0;
 
