@@ -201,6 +201,11 @@ final class Program {
 		return this;
 	}
 private:
+	auto setUniform(int id, bool value) {
+		glUniform1i(id, value);
+		logIfError("glUniform1i(%s,%s)".format(id, value));
+		return this;
+	}
 	auto setUniform(int id, int value) {
 		glUniform1i(id, value);
 		logIfError("glUniform1i(%s,%s)".format(id, value));
@@ -281,6 +286,16 @@ private:
 	auto setUniform(int id, ref vec4 v) {
 		glUniform4f(id, v.x, v.y, v.z, v.w);
 		logIfError("glUniform4f(id %s, Vector4)".format(id));
+		return this;
+	}
+    auto setUniform(int id, bool[] array) {
+        glUniform1iv(id, cast(int)array.length, array.map!(it=>it ? 1 : 0).array.ptr);
+        logIfError("glUniform1iv(id %s, int[])".format(id));
+        return this;
+    }
+	auto setUniform(int id, int[] array) {
+		glUniform1iv(id, cast(int)array.length, array.ptr);
+		logIfError("glUniform1iv(id %s, int[])".format(id));
 		return this;
 	}
 	auto setUniform(int id, float[] floats) {

@@ -16,6 +16,7 @@ import common :
     flushConsole,
     fromWStringz,
     getCommandLineArgs,
+    toInt,
     StructCache;
 
 import core.memory				: GC;

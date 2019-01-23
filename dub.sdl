@@ -39,7 +39,7 @@ dependency "fonts" version="~master"
 dependency "resources" version="~master"
 
 // external
-dependency "derelict-gl3" version="~>2.0.0-beta.6"
+dependency "derelict-gl3" version="~>2.0.0-beta.7"
 dependency "derelict-glfw3" version="~>4.0.0-beta.1"
 
 

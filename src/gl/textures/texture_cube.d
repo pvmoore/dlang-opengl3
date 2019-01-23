@@ -36,8 +36,8 @@ final class CubeMapTexture : Texture {
             "/front.png",
         ];
 
-        foreach(uint i, filename; filenames) {
-            loadFace(i, directory~filename);
+        foreach(i, filename; filenames) {
+            loadFace(i.toInt, directory~filename);
         }
         return texture;
     }
