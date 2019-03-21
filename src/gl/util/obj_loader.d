@@ -27,16 +27,20 @@ OBJModel loadOBJ(OpenGL gl, VAO vao, string filename, bool verbose=true) {
 			for(auto i=0; i<3; i++) {
 				string[] ele = tokens[i+1].split("/");
 				log("ele=%s", ele); flushLog();
+
 				int v  = ele[0].to!int-1;
 				int uv = ele[1].length>0 ? ele[1].to!int-1 : -1;	// may not be present
 				int n  = ele[2].length>0 ? ele[2].to!int-1 : -1;	// may not be present
+
 				vFace ~= vertices[v];
+
 				if(uv>=0) {
 					uvFace ~= uvs[uv];
 				}
 				if(n>=0) {
 					nFace ~= normals[n];
 				}
+
 				if(verbose) log("face v:%s uv:%s n:%s", v,uv,n);
 				if(verbose) flushLog();
 			}

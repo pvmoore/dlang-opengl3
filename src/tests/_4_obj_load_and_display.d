@@ -44,7 +44,7 @@ final class ObjLoadAndDisplayTest : Test {
 
 		model.setVP(View, Projection);
 		
-		Vector3 lightPos = Vector3(3,20,30); // in world space
+		Vector3 lightPos = Vector3(30,200,300); // in world space
 		model.setLightPos(lightPos);
 
 		fpsCounters ~= new FpsCounter(gl);
@@ -54,9 +54,11 @@ final class ObjLoadAndDisplayTest : Test {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);	
+		glDepthFunc(GL_LESS);
+		glDepthRange(1f, 0f);	// this is reversed because of the proj matrix i think :)
 		CheckGLErrors();
 	}
 	void destroy() {
