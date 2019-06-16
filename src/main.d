@@ -46,7 +46,7 @@ final class MyApplication : ApplicationListener {
 		wstring testNum = args.length>1 ? args[1] : "1";
 		log("executing test program %s", testNum);
 
-		testNum = "4";
+		testNum = "1";
 
 		auto glVer = [3,3];
 		if(testNum=="7") glVer = [4,3];

@@ -50,6 +50,7 @@ final class Hints {
 	bool decorated    = true;
 	bool resizable    = false;
 	bool autoIconify  = false;
+	bool vsync		  = false;
 	int samples       = 8;
 	bool showWindow   = true;
 	string title	  = "OpenGL";
@@ -193,32 +194,32 @@ public:
         else glfwHideWindow(window);
 	}
 
-	@property float FPS() { return currentFPS; }
+	float FPS() { return currentFPS; }
 
-	@property HGLRC getGLContext() {
+	HGLRC getGLContext() {
 		*(cast(void**)&wglGetCurrentContext) = glfwGetProcAddress("wglGetCurrentContext");
 		return wglGetCurrentContext();
 	}
-	@property HDC getDC() {
+	HDC getDC() {
 		*(cast(void**)&wglGetCurrentDC) = glfwGetProcAddress("wglGetCurrentDC");
 		return wglGetCurrentDC();
 	}
-	@property Dimension windowSize() {
+	Dimension windowSize() {
 		int w, h;
 		glfwGetWindowSize(window, &w, &h);
 		return Dimension(w,h);
 	}
-	@property Dimension frameBufferSize() {
+ 	Dimension frameBufferSize() {
 		int w, h;
 		glfwGetFramebufferSize(window, &w, &h);
 		return Dimension(w,h);
 	}
-	@property Tuple!(float,float) mousePos() { 
+	Tuple!(float,float) mousePos() {
 		double x,y;
 		glfwGetCursorPos(window, &x, &y);
 		return Tuple!(float,float)(cast(float)x, cast(float)y); 
 	}
-	@property MouseState mouseState() {
+	MouseState mouseState() {
         MouseState state = g_mouseState;
         g_mouseState.wheel = 0;
         return state;
@@ -382,6 +383,12 @@ private:
 			throw new Exception("glfwCreateWindow failed");
 		}
 		glfwMakeContextCurrent(window);
+
+		if(hints.vsync) {
+			glfwSwapInterval(1);
+		} else {
+			glfwSwapInterval(0);
+		}
 
 		glfwSetKeyCallback(window, &onKeyEvent);
 		glfwSetWindowFocusCallback(window, &onWindowFocusEvent);
