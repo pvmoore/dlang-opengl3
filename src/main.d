@@ -6,35 +6,35 @@ import core.sys.windows.windows : HINSTANCE, LPSTR, MessageBoxA, MB_OK, MB_ICONE
 
 __gshared HINSTANCE hInstance;
 
-extern(Windows) 
+extern(Windows)
 int WinMain(HINSTANCE theHInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	int result = 0;
 	hInstance = theHInstance;
 	MyApplication app;
-	try{ 
-		Runtime.initialize(); 
+	try{
+		Runtime.initialize();
 
 		app = new MyApplication();
 		app.run();
-		
-	}catch(Throwable e) { 
+
+	}catch(Throwable e) {
 		log("exception: %s", e.msg);
-		MessageBoxA(null, e.toString().toStringz, "Error", MB_OK | MB_ICONEXCLAMATION); 
+		MessageBoxA(null, e.toString().toStringz, "Error", MB_OK | MB_ICONEXCLAMATION);
 		result = -1;
-	}finally{ 
+	}finally{
 		flushLog();
 		app.destroy();
-		Runtime.terminate(); 
+		Runtime.terminate();
 	}
 	flushLog();
-	return result; 
+	return result;
 }
 
 final class MyApplication : ApplicationListener {
 	OpenGL gl;
 	bool[256] keys;
 	Test test;
-	
+
 	this() {
 		//gl = new OpenGL(this, "OpenGL Testing", 1920, 1080, false);
 		//gl = new OpenGL(this, "OpenGL Testing", 1024, 768, true);
@@ -46,7 +46,7 @@ final class MyApplication : ApplicationListener {
 		wstring testNum = args.length>1 ? args[1] : "1";
 		log("executing test program %s", testNum);
 
-		testNum = "1";
+		testNum = "9";
 
 		auto glVer = [3,3];
 		if(testNum=="7") glVer = [4,3];
@@ -85,7 +85,7 @@ final class MyApplication : ApplicationListener {
 		gl.enterMainLoop();
 	}
 	void keyPress(uint keyCode, uint scanCode, bool down, uint mods) {
-		//log("keyCode %s scanCode %s down? %s mods %s", keyCode, scanCode, down, mods); 
+		//log("keyCode %s scanCode %s down? %s mods %s", keyCode, scanCode, down, mods);
 		//keys[scanCode] = true;
 	}
 	void mouseButton(uint button, float x, float y, bool down, uint mods) {
@@ -96,10 +96,10 @@ final class MyApplication : ApplicationListener {
 		final switch(button) {
 			case MouseButton.LEFT:
 			case MouseButton.MIDDLE:
-			case MouseButton.RIGHT: 
+			case MouseButton.RIGHT:
 				log("button %s %s,%s %s %s", button, x, y, down, mods);
 				break;
-		}	
+		}
 	}
 	void mouseMoved(float x, float y) {
 		//log("mouse moved to (%s,%s)", x,y);
@@ -107,7 +107,7 @@ final class MyApplication : ApplicationListener {
 	void mouseWheel(float xdelta, float ydelta, float x, float y) {
 		//log("mouse wheel delta %s mouse (%s,%s)", ydelta, x, y);
 	}
-	void render(long actualFrameNumber, long normalisedFrameNumber, float timeDelta) {	
+	void render(long actualFrameNumber, long normalisedFrameNumber, float timeDelta) {
 		test.render(actualFrameNumber, normalisedFrameNumber, timeDelta);
 	}
 }

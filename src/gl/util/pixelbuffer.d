@@ -24,6 +24,10 @@ final class PixelBuffer {
     uint width, height;
     uint textureID;
     SpriteRenderer quadRenderer;
+    
+    ubyte[] getRGBData() {
+        return cast(ubyte[])pixels;
+    }
 
     this(OpenGL gl, Vector2 screenPos, uint w, uint h) {
         import std.range : iota;
