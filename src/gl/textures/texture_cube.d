@@ -37,7 +37,7 @@ final class CubeMapTexture : Texture {
         ];
 
         foreach(i, filename; filenames) {
-            loadFace(i.toInt, directory~filename);
+            loadFace(i.as!int, directory~filename);
         }
         return texture;
     }

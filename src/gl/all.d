@@ -16,7 +16,7 @@ import common :
     flushConsole,
     fromWStringz,
     getCommandLineArgs,
-    toInt,
+    as,
     StructCache;
 
 import core.memory				: GC;
@@ -26,7 +26,7 @@ import std.stdio				: File;
 import std.path					: absolutePath, buildNormalizedPath;
 import std.file                 : exists;
 import std.math					: sin,cos,abs;
-import std.string   		 	: toStringz, fromStringz, format, 
+import std.string   		 	: toStringz, fromStringz, format,
 								  split, toLower, strip, indexOf;
 import std.array				: Appender, appender, join;
 import std.conv					: to;
