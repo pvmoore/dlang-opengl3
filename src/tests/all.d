@@ -17,6 +17,6 @@ import tests._9_skybox;
 interface Test {
 	void setup();
 	void destroy();
-	void render(long frameNumber, long normalisedFrameNumber, float updateRatio);
+	void render(ulong frameNumber, float seconds, float perSecond);
 	void mouseClicked(float x, float y) nothrow;
 }

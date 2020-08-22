@@ -4,8 +4,8 @@ import gl.all;
 import tests.all;
 
 final class Test2D : Test {
-	enum Page : int { 
-		RECTANGLES=0, CIRCLES, TRIANGLES, 
+	enum Page : int {
+		RECTANGLES=0, CIRCLES, TRIANGLES,
 		GRIDRENDERER, SPRITERENDERER, TEXTRENDERER, LINES
 	}
 	Page page = Page.CIRCLES;
@@ -146,7 +146,7 @@ final class Test2D : Test {
 			.apply();
 		outline ~= OutlineRectangleData(trans[0], trans[1], trans[2], trans[3], WHITE, 1);
 		textureFilled ~= FilledRectangleData(trans[0], trans[1], trans[2], trans[3], WHITE, Vector4(0,0,1,1));
-		
+
 		outlineRectangleRenderers ~= new OutlineRectangleRenderer(gl)
 			.withRectangles(outline)
 			.setVP(camera.VP);
@@ -211,7 +211,7 @@ final class Test2D : Test {
 			.appendText("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 50+28*10)
 			.appendText("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 50+28*11)
 			.setVP(camera.VP);
-	
+
 		textRenderers ~= new SDFFontRenderer(gl, segoePrint, false)
 			.setColour(RED*0.8)
 			.setSize(32)
@@ -232,8 +232,8 @@ final class Test2D : Test {
 	void setupLineRendererTab() {
 		LineData[] lines;
 		for(auto x=0; x<18; x++) {
-			lines ~= LineData(Vector2(50+x*50, 260), 
-						  Vector2(100+x*50, 440),	 
+			lines ~= LineData(Vector2(50+x*50, 260),
+						  Vector2(100+x*50, 440),
 						  MAGENTA,
 						  WHITE,
 						  x+1);
@@ -286,12 +286,12 @@ final class Test2D : Test {
 				with(cast(SDFFontRenderer)tabTitle) {
 					replaceText("%s".format(page));
 				}
-				watch.reset(); 
+				watch.reset();
 				numFrames = 0;
 			}
 		}catch(Exception e) {}
 	}
-	void update(float speedDelta) {
+	void update(float perSecond) {
 		//camera.zoomIn(speedDelta*0.01);
 		//camera.rotateBy(speedDelta);
 
@@ -304,13 +304,13 @@ final class Test2D : Test {
 		//filledRectangleRenderers.each!(it=>it.setVP(camera.VP));
 		//outlineRectangleRenderers.each!(it=>it.setVP(camera.VP));
 	}
-	void render(long frameNumber, long normalisedFrameNumber, float speedDelta) {
-		update(speedDelta);
+	void render(ulong frameNumber, float seconds, float perSecond) {
+		update(perSecond);
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		watch.start();
-		with(Page) switch(page) { 
+		with(Page) switch(page) {
 			case CIRCLES :
 				circleRenderer.render();
 				break;
@@ -325,7 +325,7 @@ final class Test2D : Test {
 				break;
 			case SPRITERENDERER:
 				with(cast(SpriteRenderer)spriteRenderer) {
-					sprites.each!(it=>it.rotate(speedDelta*1));
+					sprites.each!(it=>it.rotate(perSecond*10));
 					render();
 				}
 				break;
@@ -362,9 +362,9 @@ final class Test2D : Test {
 
 		watch.stop();
 		numFrames++;
-		if((numFrames&0xff)==0) {
-			double nsecs = watch.peek().total!"nsecs";
-			log("_1_2d: [%s] %s nsecs per frame", "%s".format(page), nsecs/numFrames);
-		}
+		// if((numFrames&0xff)==0) {
+		// 	double nsecs = watch.peek().total!"nsecs";
+		// 	log("_1_2d: [%s] %s nsecs per frame", "%s".format(page), nsecs/numFrames);
+		// }
 	}
 }

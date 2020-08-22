@@ -54,7 +54,7 @@ final class CubeTest : Test {
 	}
 	void mouseClicked(float x, float y) {
 	}
-	void render(long frameNumber, long normalisedFrameNumber, float speedDelta) {
+	void render(ulong frameNumber, float seconds, float perSecond) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		cube.render();
 		fpsCounter.render();

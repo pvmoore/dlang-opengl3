@@ -22,16 +22,16 @@ interface ApplicationListener {
 	void mouseButton(uint button, float x, float y, bool down, uint mods) nothrow;
 	void mouseMoved(float x, float y) nothrow;
 	void mouseWheel(float xdelta, float ydelta, float x, float y) nothrow;
-	void render(long actualFrameNumber, long normalisedFrameNumber, float timeDelta);
+	void render(ulong number, float seconds, float perSecond);
 }
 class ApplicationListenerAdapter : ApplicationListener {
 	void keyPress(uint keyCode, uint scanCode, bool down, uint mods) nothrow {}
 	void mouseButton(uint button, float x, float y, bool down, uint mods) nothrow {}
 	void mouseMoved(float x, float y) nothrow {}
 	void mouseWheel(float xdelta, float ydelta, float x, float y) nothrow {}
-	void render(long actualFrameNumber, long normalisedFrameNumber, float timeDelta) {}
+	void render(ulong number, float seconds, float perSecond) {}
 }
-final struct MouseState {
+struct MouseState {
 	Vector2 pos;
 	int button = -1;
 	float wheel = 0;
@@ -65,7 +65,7 @@ final class Font {
     uint textureId;
 }
 
-__gshared ApplicationListener listener;	
+__gshared ApplicationListener listener;
 __gshared MouseState g_mouseState;
 
 // -----------------------------------------------------------------------------
@@ -77,8 +77,6 @@ private:
 	Shader[string] shaders;
 	Program[] programs;
 	Renderer[] renderers;
-	uint targetFPS = 60;
-	ulong targetFrameTimeNsecs = 1_000_000_000/60;
     ulong frameNumber;
     float currentFPS = 0;
     Font[string] fonts;
@@ -90,7 +88,7 @@ public:
 	this(ApplicationListener theListener, void delegate(Hints h) call) {
 		listener = theListener;
 		call(hints);
-		init();
+		initialise();
 	}
 	this(ApplicationListener theListener, string title, uint width, uint height, bool windowed) {
 		listener = theListener;
@@ -100,7 +98,7 @@ public:
 		hints.windowed = windowed;
 		hints.title = title;
 
-		init();
+		initialise();
 	}
 	void destroy() {
 		log("Destroying OpenGL");
@@ -137,21 +135,19 @@ public:
 		DerelictGLFW3.unload();
 		DerelictGL3.unload();
 	}
-	
+
 	void enterMainLoop() {
 		StopWatch watch;
-		ulong lastFrameTotalNsecs = 0;
-		double currentSpeedDelta = 1;
-		double normalisedFrameNumber = 1;
-		uint actualFpsCounter;
-		double normalisedFpsCounter = 0;
-        double totalFPS = 0;
+		enum targetFrameTimeNsecs = 1_000_000_000/60;
+		enum targetFPS = 60;
+		ulong lastFrameTotalNsecs;
+		float seconds = 0;
+		float perSecond = 1;
+		ulong lastSecond;
 		watch.start();
 		while(!glfwWindowShouldClose(window)) {
 
-			listener.render(++frameNumber, 
-							cast(long)normalisedFrameNumber, 
-							cast(float)currentSpeedDelta);
+			listener.render(++frameNumber, seconds, perSecond);
 
 			if(ui) ui.render();
 
@@ -161,29 +157,21 @@ public:
 			glfwPollEvents();
 
 			// update timing information
-			long totalNsecs = watch.peek().total!"nsecs";
-			//double seconds = totalNsecs/1_000_000_000.0;
-			long frameNsecs = totalNsecs - lastFrameTotalNsecs;
-			lastFrameTotalNsecs = totalNsecs;
+			long time = watch.peek().total!"nsecs";
+			long frameNsecs = time - lastFrameTotalNsecs;
+			lastFrameTotalNsecs = time;
 
-			currentSpeedDelta = cast(double)frameNsecs/targetFrameTimeNsecs;
-			normalisedFrameNumber += currentSpeedDelta;
+			perSecond = frameNsecs/1_000_000_000.0;
+			seconds  += perSecond;
 
-            double fps = targetFPS/currentSpeedDelta;
+			if(seconds > lastSecond) {
+				lastSecond = (seconds + 1).as!ulong;
 
-            totalFPS += fps;
-            actualFpsCounter++;
-            normalisedFpsCounter += currentSpeedDelta;
+				currentFPS = 1_000_000_000.0 / frameNsecs;
 
-			if(normalisedFpsCounter>targetFPS) {
-                currentFPS = cast(float)(totalFPS/actualFpsCounter);
-                actualFpsCounter = 0;
-                normalisedFpsCounter = 0;
-                totalFPS   = 0;
-            }
-
-			//log("speedDelta %s totalSpeedDelta %s seconds %s frameNsecs %s totalNsecs %s", 
-			//	currentSpeedDelta, totalSpeedDelta, seconds, frameNsecs, totalNsecs);
+				log("Frame: %s Seconds: %0.2f frameNsecs: %s perSecond: %s FPS: %s",
+					frameNumber, seconds, frameNsecs, perSecond, currentFPS);
+			}
 		}
 	}
 	void flip() {
@@ -193,9 +181,9 @@ public:
         if(show) glfwShowWindow(window);
         else glfwHideWindow(window);
 	}
-
-	float FPS() { return currentFPS; }
-
+	float FPS() {
+		return currentFPS;
+	}
 	HGLRC getGLContext() {
 		*(cast(void**)&wglGetCurrentContext) = glfwGetProcAddress("wglGetCurrentContext");
 		return wglGetCurrentContext();
@@ -217,7 +205,7 @@ public:
 	Tuple!(float,float) mousePos() {
 		double x,y;
 		glfwGetCursorPos(window, &x, &y);
-		return Tuple!(float,float)(cast(float)x, cast(float)y); 
+		return Tuple!(float,float)(cast(float)x, cast(float)y);
 	}
 	MouseState mouseState() {
         MouseState state = g_mouseState;
@@ -231,10 +219,6 @@ public:
 	bool isMouseButtonPressed(int button) {
 		return glfwGetMouseButton(window, button) == GLFW_PRESS;
 	}
-	void setTargetFPS(int fps) {
-	    targetFPS = fps;
-		targetFrameTimeNsecs = 1_000_000_000/fps;
-	}
 	void setWindowTitle(string title) {
 		hints.title = title;
 		glfwSetWindowTitle(window, title.toStringz);
@@ -243,7 +227,7 @@ public:
 		// TODO
 	}
 	void setMouseCursorVisible(bool visible) {
-		glfwSetInputMode(window, GLFW_CURSOR, visible? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN); 
+		glfwSetInputMode(window, GLFW_CURSOR, visible? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
 	}
 	auto getLineRenderer() {
 		auto l = new LineRenderer(this);
@@ -332,7 +316,7 @@ public:
         return f;
 	}
 private:
-	void init() {
+	void initialise() {
 		this.textures = new Textures();
 
 		DerelictGL3.load();
@@ -481,7 +465,7 @@ void onMouseClickEvent(GLFWwindow* window, int button, int action, int mods) not
 void onMouseMoveEvent(GLFWwindow* window, double x, double y) nothrow {
 	//log("mouse move %s %s", x, y);
 	listener.mouseMoved(cast(float)x, cast(float)y);
-	g_mouseState.pos = Vector2(x,y); 
+	g_mouseState.pos = Vector2(x,y);
 	if(!g_mouseState.isDragging && g_mouseState.button >= 0) {
 		g_mouseState.isDragging = true;
 		g_mouseState.dragStart = Vector2(x,y);

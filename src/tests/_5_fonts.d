@@ -28,7 +28,7 @@ final class TestFonts : Test {
 		auto View = Matrix4.lookAt(
 			Vector3(0,0,1), // camera position in World Space
 			Vector3(0,0,0), // look at the origin
-			Vector3(0,1,0)  // head is up 
+			Vector3(0,1,0)  // head is up
 		);
 
 		Dimension winSize = gl.windowSize;
@@ -92,7 +92,7 @@ final class TestFonts : Test {
 			 .apply();
 		outlineRectangleRenderers ~= new OutlineRectangleRenderer(gl)
 			.addRectangles(
-				OutlineRectangleData(trans[0],trans[1],trans[2],trans[3], 
+				OutlineRectangleData(trans[0],trans[1],trans[2],trans[3],
 								WHITE*0.7, 1)
 			)
 			.setVP(MVP);
@@ -151,9 +151,9 @@ final class TestFonts : Test {
 	}
 	void mouseClicked(float x, float y) {
 	}
-	void render(long frameNumber, long normalisedFrameNumber, float speedDelta) {
+	void render(ulong frameNumber, float seconds, float perSecond) {
 		glClear(GL_COLOR_BUFFER_BIT);
-		
+
 		watch.start();
 		// draw rectangles first
 		filledRectangleRenderers.each!(it=>it.render());

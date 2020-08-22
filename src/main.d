@@ -107,7 +107,7 @@ final class MyApplication : ApplicationListener {
 	void mouseWheel(float xdelta, float ydelta, float x, float y) {
 		//log("mouse wheel delta %s mouse (%s,%s)", ydelta, x, y);
 	}
-	void render(long actualFrameNumber, long normalisedFrameNumber, float timeDelta) {
-		test.render(actualFrameNumber, normalisedFrameNumber, timeDelta);
+	void render(ulong actualFrameNumber, float seconds, float perSecond) {
+		test.render(actualFrameNumber, seconds, perSecond);
 	}
 }

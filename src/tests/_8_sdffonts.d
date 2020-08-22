@@ -81,7 +81,7 @@ final class TestSDFFonts : Test {
     }
     void mouseClicked(float x, float y) nothrow {
     }
-    void render(long frameNumber, long normalisedFrameNumber, float updateRatio) {
+    void render(ulong frameNumber, float seconds, float perSecond) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         box.render();

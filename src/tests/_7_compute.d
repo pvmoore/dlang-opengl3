@@ -67,7 +67,7 @@ final class TestCompute : Test {
         if(prog1) prog1.destroy();
         if(prog2) prog2.destroy();
     }
-    void render(long frameNumber, long normalisedFrameNumber, float updateRatio) {
+    void render(ulong frameNumber, float seconds, float perSecond) {
         glClear(GL_COLOR_BUFFER_BIT);
         runReadWriteBufferExample();
         //runReadWriteImageExample();
@@ -154,7 +154,7 @@ private:
 
         w.stop();
 
-        writefln("[0] time = %s (query time = %s [avg=%.3f])",
+        log("[0] time = %s (query time = %s [avg=%.3f])",
             w.peek().total!"nsecs"/1000000.0, time/1000000.0, getAverageTime());
 
         //
@@ -163,7 +163,7 @@ private:
 
         uint[] buf = readBuffer!uint(output1);
         //writefln("buf[0..8]=%s", buf[0..8].map!(it=>"%b".format(it)).join(","));
-        writefln("buf[0] = %s (%f)", buf[0], cast(double)buf[0]/100000.0);
+        log("buf[0] = %s (%f)", buf[0], cast(double)buf[0]/100000.0);
         //writefln("buf[0]=%04x", buf[0]);
     }
     void updateAverageTime(ulong time) {

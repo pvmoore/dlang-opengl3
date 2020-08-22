@@ -43,7 +43,7 @@ final class ObjLoadAndDisplayTest : Test {
 		//model.position(Vector3(-70,-20,-170));
 
 		model.setVP(View, Projection);
-		
+
 		Vector3 lightPos = Vector3(30,200,300); // in world space
 		model.setLightPos(lightPos);
 
@@ -66,13 +66,13 @@ final class ObjLoadAndDisplayTest : Test {
 		if(model) model.destroy();
 		if(vao) vao.destroy();
 	}
-	void update(float speedDelta) {
+	void update(float perSecond) {
 		float scaleFactor = 1+cos(scaleAmt)*0.9f;
 
 		model.scale(Vector3(scaleFactor,scaleFactor,scaleFactor));
 		model.rotation(xangle, yangle, zangle);
 
-		float add = 0.015 * speedDelta;
+		float add = 0.5 * perSecond;
 		xangle += add;
 		yangle += add;
 		zangle += add;
@@ -80,8 +80,8 @@ final class ObjLoadAndDisplayTest : Test {
 	}
 	void mouseClicked(float x, float y) {
 	}
-	void render(long frameNumber, long normalisedFrameNumber, float speedDelta) {
-		update(speedDelta);
+	void render(ulong frameNumber, float seconds, float perSecond) {
+		update(perSecond);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT/* | GL_STENCIL_BUFFER_BIT*/);
 		model.render();
 		fpsCounters.each!(it=>it.render());
