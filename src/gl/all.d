@@ -17,7 +17,8 @@ import common :
     fromWStringz,
     getCommandLineArgs,
     as,
-    StructCache;
+    StructCache,
+    Timing;
 
 import core.memory				: GC;
 import core.runtime 		 	: Runtime;

@@ -79,6 +79,7 @@ private:
 	Renderer[] renderers;
     ulong frameNumber;
     float currentFPS = 0;
+	Timing frameTiming;
     Font[string] fonts;
 public:
     Textures textures;
@@ -87,6 +88,7 @@ public:
 	/// new OpenGL(this, (h) { h.width = x; h.height = y; });
 	this(ApplicationListener theListener, void delegate(Hints h) call) {
 		listener = theListener;
+		this.frameTiming = new Timing(10,3);
 		call(hints);
 		initialise();
 	}
@@ -164,10 +166,12 @@ public:
 			perSecond = frameNsecs/1_000_000_000.0;
 			seconds  += perSecond;
 
+			frameTiming.endFrame(frameNsecs);
+
 			if(seconds > lastSecond) {
 				lastSecond = (seconds + 1).as!ulong;
 
-				currentFPS = 1_000_000_000.0 / frameNsecs;
+				currentFPS = 1000.0 / frameTiming.average(2);
 
 				log("Frame: %s Seconds: %0.2f frameNsecs: %s perSecond: %s FPS: %s",
 					frameNumber, seconds, frameNsecs, perSecond, currentFPS);
